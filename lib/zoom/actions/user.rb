@@ -97,7 +97,7 @@ module Zoom
       def user_settings_update(*args)
         params = Zoom::Params.new(Utils.extract_options!(args))
         params.require(:id).permit(%i[schedule_meeting in_meeting email_notification recording integration])
-        Utils.parse_response self.class.patch("/users/#{params[:id]}/settings", body: params.except(:id), headers: request_headers)
+        Utils.parse_response self.class.patch("/users/#{params[:id]}/settings", body: params.except(:id).to_json, headers: request_headers)
       end
 
       def user_status_update(*args)
