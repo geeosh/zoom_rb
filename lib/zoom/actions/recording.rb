@@ -3,30 +3,32 @@
 module Zoom
   module Actions
     module Recording
-      def recording_list(*args)
-        options = Utils.extract_options!(args)
-        Zoom::Params.new(options).require(:host_id)
-        Utils.process_datetime_params!(%i[from to], options)
-        Utils.parse_response self.class.post('/recording/list', query: options)
+      # Get all recordings for a user's account
+      def user_recording_list(*args)
+        options = Zoom::Params.new(Utils.extract_options!(args))
+        options.require(%i[user_id])
+        Utils.parse_response self.class.get("/users/#{options[:user_id]}/recordings", query: options, headers: request_headers)
       end
 
-      def mc_recording_list(*args)
-        options = Utils.extract_options!(args)
-        Zoom::Params.new(options).require(:host_id)
-        Utils.process_datetime_params!(%i[from to], options)
-        Utils.parse_response self.class.post('/mc/recording/list', query: options)
+      # Get all recordings for a meeting
+      def meeting_recording_list(*args)
+        options = Zoom::Params.new(Utils.extract_options!(args))
+        options.require(%i[meeting_id])
+        Utils.parse_response self.class.get("/meetings/#{options[:meeting_id]}/recordings", query: options, headers: request_headers)
       end
 
-      def recording_get(*args)
-        options = Utils.extract_options!(args)
-        Zoom::Params.new(options).require(:meeting_id)
-        Utils.parse_response self.class.post('/recording/get', query: options)
+      # Delete all recordings for a meeting
+      def meeting_recordings_delete(*args)
+        options = Zoom::Params.new(Utils.extract_options!(args))
+        options.require(%i[meeting_id])
+        Utils.parse_response self.class.delete("/meetings/#{options[:meeting_id]}/recordings", query: options, headers: request_headers)
       end
 
-      def recording_delete(*args)
-        options = Utils.extract_options!(args)
-        Zoom::Params.new(options).require(:meeting_id)
-        Utils.parse_response self.class.post('/recording/delete', query: options)
+      # Delete a single recording for a meeting
+      def meeting_recording_delete(*args)
+        options = Zoom::Params.new(Utils.extract_options!(args))
+        options.require(%i[meeting_id recording_id])
+        Utils.parse_response self.class.delete("/meetings/#{options[:meeting_id]}/recordings/#{options[:recording_id]}", query: options, headers: request_headers)
       end
     end
   end
